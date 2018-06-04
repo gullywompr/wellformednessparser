@@ -11,7 +11,7 @@ public class LexerTests {
 
   private XmlParser parser = new XmlParser();
 
-  Lexer lexer = new Lexer(parser);
+  private final Lexer lexer = new Lexer(parser);
 
   @Before
   public void setup() {
@@ -25,7 +25,7 @@ public class LexerTests {
 
     lexer.analyze(xml);
 
-    Assert.assertEquals(true, parser.allOpenAndCloseTagsMatch());
+      Assert.assertTrue(parser.allOpenAndCloseTagsMatch());
     Assert.assertEquals(0, parser.getErrors().size());
   }
 
@@ -62,9 +62,8 @@ public class LexerTests {
     assertThat(lexer.getErrors(), is("[]"));
   }
 
-
-    @Test
-    public void should_report_well_formed_for_sample_xml() {
+  @Test
+  public void should_report_well_formed_for_sample_xml() {
 
     String xml =
         "<BackgroundCheck>\n"
@@ -75,9 +74,9 @@ public class LexerTests {
             + "</CriminalHistory>\n"
             + "</BackgroundCheck>";
 
-        lexer.analyze(xml);
+    lexer.analyze(xml);
 
-        assertThat(lexer.wellFormed(), is(true));
-        assertThat(lexer.getErrors(), is("[]"));
-    }
+    assertThat(lexer.wellFormed(), is(true));
+    assertThat(lexer.getErrors(), is("[]"));
+  }
 }

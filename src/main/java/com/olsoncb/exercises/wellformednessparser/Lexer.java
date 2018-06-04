@@ -3,9 +3,9 @@ package com.olsoncb.exercises.wellformednessparser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Lexer {
+class Lexer {
 
-  private static Pattern whitePattern = Pattern.compile("^\\s+");
+  private static final Pattern whitePattern = Pattern.compile("^\\s+");
   private static Pattern namePattern = Pattern.compile("^\\w+");
   private XmlParser parser;
   private int lineNumber;

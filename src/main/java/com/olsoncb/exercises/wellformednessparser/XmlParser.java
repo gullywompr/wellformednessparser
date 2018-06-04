@@ -6,12 +6,12 @@ import java.util.Stack;
 
 import static com.olsoncb.exercises.wellformednessparser.ParserEvent.*;
 
-public class XmlParser {
+class XmlParser {
 
   private ParserState state = ParserState.CLOSE_TAG_TERMINATED;
   private String openElementName;
   private String text;
-  private Stack<String> stack = new Stack<>();
+  private final Stack<String> stack = new Stack<>();
   private List<String> errors = new ArrayList<>();
 
   public void error(String message, int lineNumber, int position) {
@@ -56,29 +56,28 @@ public class XmlParser {
             break;
           case TEXT:
             openElementName = text;
-              this.state = ParserState.OPEN_TAG_NAMED;
+            this.state = ParserState.OPEN_TAG_NAMED;
             break;
         }
         break;
 
-        case OPEN_TAG_NAMED:
-            switch (event) {
-                case OPEN_ANGLE:
-                    error("Too many open angle brackets", lineNumber, position);
-                    break;
-                case CLOSE_ANGLE:
-                    stack.push(openElementName);
-                    this.state = ParserState.OPEN_TAG_TERMINATED;
-                    break;
-                case SLASH:
-                    this.state = ParserState.OPEN_TAG_AUTOCLOSE_INITIATED;
-                    break;
-                case TEXT:
-                    error("Element name can only be one word", lineNumber, position);
-                    break;
-            }
+      case OPEN_TAG_NAMED:
+        switch (event) {
+          case OPEN_ANGLE:
+            error("Too many open angle brackets", lineNumber, position);
             break;
-
+          case CLOSE_ANGLE:
+            stack.push(openElementName);
+            this.state = ParserState.OPEN_TAG_TERMINATED;
+            break;
+          case SLASH:
+            this.state = ParserState.OPEN_TAG_AUTOCLOSE_INITIATED;
+            break;
+          case TEXT:
+            error("Element name can only be one word", lineNumber, position);
+            break;
+        }
+        break;
 
       case OPEN_TAG_AUTOCLOSE_INITIATED:
         switch (event) {
