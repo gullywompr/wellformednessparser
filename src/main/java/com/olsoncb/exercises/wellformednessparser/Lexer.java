@@ -11,11 +11,11 @@ class Lexer {
   private int lineNumber;
   private int position;
 
-  public Lexer(XmlParser parser) {
+  Lexer(XmlParser parser) {
     this.parser = parser;
   }
 
-  public void analyze(String s) {
+  void analyze(String s) {
     lineNumber = 1;
     String lines[] = s.split("\n");
     for (String line : lines) {
@@ -26,7 +26,10 @@ class Lexer {
   }
 
   private void analyzeLine(String line) {
-    for (position = 0; position < line.length(); ) analyzeToken(line);
+      position = 0;
+      while (position < line.length()) {
+          analyzeToken(line);
+      }
   }
 
   private void analyzeToken(String line) {
@@ -78,11 +81,11 @@ class Lexer {
     return false;
   }
 
-  public boolean wellFormed() {
+  boolean wellFormed() {
     return parser.allOpenAndCloseTagsMatch();
   }
 
-  public String getErrors() {
+  String getErrors() {
     return String.valueOf(parser.getErrors());
   }
 }
