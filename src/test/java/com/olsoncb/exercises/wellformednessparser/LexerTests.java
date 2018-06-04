@@ -4,58 +4,80 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 public class LexerTests {
 
-    private XmlParser parser = new XmlParser();
-    Lexer lexer = new Lexer(parser);
+  private XmlParser parser = new XmlParser();
 
-    @Before
-    public void setup(){
-        parser = new XmlParser();
-    }
+  Lexer lexer = new Lexer(parser);
+
+  @Before
+  public void setup() {
+    parser = new XmlParser();
+  }
+
+  @Test
+  public void should_report_well_formed_when_no_tokens() {
+
+    String xml = "";
+
+    lexer.analyze(xml);
+
+    Assert.assertEquals(true, parser.allOpenAndCloseTagsMatch());
+    Assert.assertEquals(0, parser.getErrors().size());
+  }
+
+  @Test
+  public void should_report_badly_formed_when_unmatched_open_tag() {
+
+    String xml = "<root>";
+
+    lexer.analyze(xml);
+
+    assertThat(lexer.wellFormed(), is(false));
+    assertThat(lexer.getErrors(), is("[Unmatched open and closed tags in xml]"));
+  }
+
+  @Test
+  public void should_report_well_formed_for_autoclose_tag() {
+
+    String xml = "<alpha/>";
+
+    lexer.analyze(xml);
+
+    assertThat(lexer.wellFormed(), is(true));
+    assertThat(lexer.getErrors(), is("[]"));
+  }
+
+  @Test
+  public void should_report_well_formed_when_matched_tags() {
+
+    String xml = "<alpha></alpha>";
+
+    lexer.analyze(xml);
+
+    assertThat(lexer.wellFormed(), is(true));
+    assertThat(lexer.getErrors(), is("[]"));
+  }
+
 
     @Test
-    public void should_find_no_tokens(){
+    public void should_report_well_formed_for_sample_xml() {
 
-        String xml = "";
+    String xml =
+        "<BackgroundCheck>\n"
+            + "<CriminalHistory>\n"
+            + "<HistoryCode>x</HistoryCode>\n"
+            + "< HistoryCode>y</HistoryCode>\n"
+            + "< HistoryCode>z</HistoryCode>\n"
+            + "</CriminalHistory>\n"
+            + "</BackgroundCheck>";
 
         lexer.analyze(xml);
 
-        Assert.assertEquals(true, parser.allOpenAndCloseTagsMatch());
-        Assert.assertEquals(0, parser.getErrors().size());
-    }
-
-    @Test
-    public void should_find_root_token(){
-
-        String xml = "<root>";
-
-        lexer.analyze(xml);
-
-        Assert.assertEquals(false, parser.allOpenAndCloseTagsMatch());
-        Assert.assertEquals(0, parser.getErrors().size());
-    }
-
-    @Test
-    public void should_find_single_non_root_tokens(){
-
-        String xml = "<alpha/>";
-
-        lexer.analyze(xml);
-
-        Assert.assertEquals(true, parser.allOpenAndCloseTagsMatch());
-        Assert.assertEquals(0, parser.getErrors().size());
-    }
-
-
-    @Test
-    public void should_find_two_non_root_tokens(){
-
-        String xml = "<alpha></alpha>";
-
-        lexer.analyze(xml);
-
-        Assert.assertEquals(true, parser.allOpenAndCloseTagsMatch());
-        Assert.assertEquals(0, parser.getErrors().size());
+        assertThat(lexer.wellFormed(), is(true));
+        assertThat(lexer.getErrors(), is("[]"));
     }
 }
